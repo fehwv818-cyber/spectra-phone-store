@@ -4,31 +4,18 @@ include 'db.php';
 
 // إضافة هاتف للمقارنة عن طريق الـ URL
 if (isset($_GET['add'])) {
-    $id = $_GET['add'];
-    if (!isset($_SESSION['compare'])) {
-        $_SESSION['compare'] = [];
-    }
-    if (!in_array($id, $_SESSION['compare'])) {
-        $_SESSION['compare'][] = $id;
-    }
-    header("Location: compare.php");
-    exit();
-}
-// إضافة هاتف للمقارنة عن طريق الـ URL
-if (isset($_GET['add'])) {
     $id = (int)$_GET['add'];
     if (!isset($_SESSION['compare'])) {
         $_SESSION['compare'] = [];
     }
-
-    // حد أقصى 4 هواتف للمقارنة مثلاً عشان شكل الجدول يفضل شغال تمام
+    // حد أقصى 4 هواتف للمقارنة عشان شكل الجدول يفضل شغال تمام
     if (!in_array($id, $_SESSION['compare']) && count($_SESSION['compare']) < 4) {
         $_SESSION['compare'][] = $id;
     }
-
     header("Location: compare.php");
     exit();
 }
+
 // إزالة هاتف من المقارنة
 if (isset($_GET['remove'])) {
     $id = $_GET['remove'];
@@ -101,26 +88,34 @@ if (count($phones) > 0) {
             background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 30px 20px 80px 20px;
+            padding: 25px 15px 90px 15px;
         }
 
         .dashboard-header {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
         .brand-title {
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .bento-card {
             background-color: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 20px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
@@ -128,20 +123,23 @@ if (count($phones) > 0) {
             background: rgba(168, 85, 247, 0.05);
             border: 1px solid rgba(168, 85, 247, 0.2);
             border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 30px;
+            padding: 18px;
+            margin-bottom: 25px;
+            font-size: 14px;
         }
 
         .analysis-box h5 {
             color: var(--accent-purple);
             font-weight: 700;
             margin-bottom: 10px;
+            font-size: 16px;
         }
 
         .table-custom {
             color: var(--text-main);
             vertical-align: middle;
             text-align: center;
+            white-space: nowrap;
         }
 
         .table-custom th,
@@ -158,8 +156,8 @@ if (count($phones) > 0) {
         }
 
         .phone-thumb {
-            width: 70px;
-            height: 70px;
+            width: 55px;
+            height: 55px;
             object-fit: cover;
             border-radius: 10px;
             border: 1px solid var(--card-border);
@@ -169,7 +167,7 @@ if (count($phones) > 0) {
             background-color: var(--accent-green);
             color: #0b0c10;
             font-weight: 700;
-            padding: 5px 10px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
         }
@@ -179,10 +177,11 @@ if (count($phones) > 0) {
             color: var(--text-main);
             border: 1px solid var(--card-border);
             border-radius: 50px;
-            padding: 8px 20px;
-            font-size: 13px;
+            padding: 7px 18px;
+            font-size: 12px;
             text-decoration: none;
             transition: all 0.2s;
+            display: inline-block;
         }
 
         .btn-outline-custom:hover {
@@ -190,14 +189,33 @@ if (count($phones) > 0) {
             color: var(--accent-purple);
         }
 
+        .btn-add-compare {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--accent-purple);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 50px;
+            padding: 7px 18px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-block;
+        }
+
+        .btn-add-compare:hover {
+            background: var(--accent-purple);
+            color: #fff;
+        }
+
         .btn-remove {
             color: #ef4444;
             background: rgba(239, 68, 68, 0.1);
             border: none;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 8px;
             font-size: 12px;
             text-decoration: none;
+            transition: all 0.2s;
         }
 
         .btn-remove:hover {
@@ -210,7 +228,7 @@ if (count($phones) > 0) {
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(18, 20, 28, 0.9);
+            background: rgba(18, 20, 28, 0.95);
             backdrop-filter: blur(12px);
             border-top: 1px solid var(--card-border);
             display: flex;
@@ -237,13 +255,14 @@ if (count($phones) > 0) {
 
     <div class="container" style="max-width: 1100px;">
 
-        <!-- الهيدر -->
+        <!-- الهيدر المظبوط والمرن -->
         <div class="dashboard-header">
             <div>
                 <div class="brand-title">Spectra Smart Comparison ⚖️</div>
-                <p class="text-muted mb-0" style="font-size: 13px;">تحليل ذكي ومقارنة فورية بين مواصفات الهواتف</p>
+                <p class="text-muted mb-0" style="font-size: 12px;">تحليل ذكي ومقارنة فورية بين مواصفات الهواتف</p>
             </div>
-            <div>
+            <div class="header-actions">
+                <a href="index.php" class="btn-add-compare">+ إضافة هاتف للمقارنة</a>
                 <a href="index.php" class="btn-outline-custom">← العودة للمتجر</a>
             </div>
         </div>
@@ -312,7 +331,8 @@ if (count($phones) > 0) {
         <?php else: ?>
             <div class="bento-card text-center py-5">
                 <p class="text-muted mb-3">قائمة المقارنة فارغة حالياً.</p>
-                <a href="index.php" class="btn-outline-custom">تصفح الهواتف وأضف للمقارنة 📱</a>
+                <a href="index.php" class="btn-add-compare mb-2">+ أضف هواتف للمقارنة</a><br>
+                <a href="index.php" class="btn-outline-custom">تصفح الهواتف من المتجر 📱</a>
             </div>
         <?php endif; ?>
 
